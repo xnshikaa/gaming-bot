@@ -4,7 +4,7 @@
   <title>BOOM Dashboard</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       padding: 2rem;
       background: #1a1a1a;
       color: white;
@@ -16,30 +16,36 @@
     }
 
     .dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 1rem;
-      justify-items: center;
+      justify-content: center;
     }
 
     .card {
       background: #2c2c2c;
-      width: 150px;
-      height: 150px;
+      width: 30%;
+      aspect-ratio: 1 / 1;
+      padding: 1.5rem;
+      border-radius: 10px;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      border-radius: 15px;
+      justify-content: center;
       text-align: center;
-      padding: 1rem;
+      font-size: 1.1rem;
+      box-sizing: border-box;
     }
 
-    .card span {
-      font-weight: bold;
-      margin-top: 0.5rem;
-      font-size: 1.1rem;
-      color: #00ffcc;
+    @media (max-width: 900px) {
+      .card {
+        width: 45%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -47,41 +53,37 @@
   <h1>💣 Boom Gambling Bot Dashboard</h1>
 
   <div class="dashboard">
-    <div class="card">🧑‍🤝‍🧑 Players<br><span id="players">Loading...</span></div>
-    <div class="card">📦 Bot Size<br><span id="bot_size">Loading...</span></div>
-    <div class="card">🗃️ Database<br><span id="db_status">Loading...</span></div>
-    <div class="card">⏱️ Uptime<br><span id="uptime">Loading...</span></div>
-    <div class="card">🏁 Time Left<br><span id="time_left">Loading...</span></div>
-    <div class="card">💰 Pool Size<br><span id="pool">Loading...</span></div>
-    <div class="card">🥇 Last Winner<br><span id="winner">Loading...</span></div>
-    <div class="card">📚 Quizzes Played<br><span id="quizzes">Loading...</span></div>
-    <div class="card">📊 Sessions Today<br><span id="sessions">Loading...</span></div>
+    <div class="card">🧑‍🤝‍🧑 Players: <br><span id="players">Loading...</span></div>
+    <div class="card">📦 Bot Size: <br><span id="bot_size">Loading...</span></div>
+    <div class="card">🗃️ Database: <br><span id="db_status">Loading...</span></div>
+    <div class="card">⏱️ Uptime: <br><span id="uptime">Loading...</span></div>
+    <div class="card">🏁 Time Left: <br><span id="time_left">Loading...</span></div>
+    <div class="card">💰 Pool Size: ₹<br><span id="pool">Loading...</span></div>
+    <div class="card">🥇 Last Winner: <br><span id="winner">Loading...</span></div>
+    <div class="card">📚 Quizzes Played: <br><span id="quizzes">Loading...</span></div>
+    <div class="card">📊 Sessions Today: <br><span id="sessions">Loading...</span></div>
   </div>
 
   <script>
-    const API_URL = "https://gaming-bot-0cvv.onrender.com/";
+    const API_URL = "https://gaming-bot-0cvv.onrender.com/"; // Replace with your backend URL
 
     async function fetchData() {
-      try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
+      const res = await fetch(API_URL);
+      const data = await res.json();
 
-        document.getElementById("players").innerText = `${data.players.active} / ${data.players.inactive}`;
-        document.getElementById("bot_size").innerText = data.bot_size;
-        document.getElementById("db_status").innerText = data.db_status;
+      document.getElementById("players").innerText = `${data.players.active} Active / ${data.players.inactive} Inactive`;
+      document.getElementById("bot_size").innerText = data.bot_size;
+      document.getElementById("db_status").innerText = data.db_status;
 
-        const hours = Math.floor(data.uptime_seconds / 3600);
-        const minutes = Math.floor((data.uptime_seconds % 3600) / 60);
-        document.getElementById("uptime").innerText = `${hours}h ${minutes}m`;
+      const hours = Math.floor(data.uptime_seconds / 3600);
+      const minutes = Math.floor((data.uptime_seconds % 3600) / 60);
+      document.getElementById("uptime").innerText = `${hours}h ${minutes}m`;
 
-        document.getElementById("time_left").innerText = data.time_left;
-        document.getElementById("pool").innerText = data.current_pool;
-        document.getElementById("winner").innerText = `${data.winner.name} (₹${data.winner.prize})`;
-        document.getElementById("quizzes").innerText = data.quizzes_played;
-        document.getElementById("sessions").innerText = data.sessions_today;
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
+      document.getElementById("time_left").innerText = data.time_left;
+      document.getElementById("pool").innerText = data.current_pool;
+      document.getElementById("winner").innerText = `${data.winner.name} (₹${data.winner.prize})`;
+      document.getElementById("quizzes").innerText = data.quizzes_played;
+      document.getElementById("sessions").innerText = data.sessions_today;
     }
 
     fetchData();
@@ -89,3 +91,4 @@
   </script>
 </body>
 </html>
+
