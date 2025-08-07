@@ -41,8 +41,9 @@
 
     .card h2 {
       margin: 0;
-      font-size: 2rem;
+      font-size: 1.8rem;
       color: #ee9b00;
+      line-height: 1.4;
     }
 
     .card p {
@@ -62,37 +63,74 @@
 <body>
   <header>🎲 Gaming Bot Dashboard</header>
   <div class="dashboard" id="dashboard">
-    <!-- Dynamic content injected via JS -->
+    <!-- Dynamic cards injected here -->
   </div>
 
   <script>
     async function fetchData() {
-      const res = await fetch('https://gaming-bot-0cvv.onrender.com/status');
-      const data = await res.json();
+      try {
+        const res = await fetch('https://gaming-bot-0cvv.onrender.com/status');
+        const data = await res.json();
 
-      const dashboard = document.getElementById('dashboard');
-      dashboard.innerHTML = '';
+        const dashboard = document.getElementById('dashboard');
+        dashboard.innerHTML = '';
 
-      const keys = {
-        bot_size: '🤖 Bot Size',
-        db_status: '🗃️ DB Status',
-        player_count: '🧍 Players Online',
-        uptime: '⏱️ Uptime'
-      };
+        const labels = {
+          players: '🧍 Players',
+          bot_size: '🤖 Bot Size',
+          db_status: '🗃️ DB Status',
+          uptime_seconds: '⏱️ Uptime',
+          sessions_today: '📅 Sessions Today',
+          quizzes_played: '❓ Quizzes Played',
+          winner: '🏆 Winner',
+          current_pool: '💰 Current Pool',
+          time_left: '⏳ Time Left'
+        };
 
-      Object.entries(data).forEach(([key, value]) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <h2>${value}</h2>
-          <p>${keys[key] || key}</p>
-        `;
-        dashboard.appendChild(card);
-      });
+        function formatSeconds(seconds) {
+          const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+          const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+          const s = String(seconds % 60).padStart(2, '0');
+          return `${h}:${m}:${s}`;
+        }
+
+        function formatValue(key, value) {
+          if (typeof value === 'object' && value !== null) {
+            if (key === 'players') {
+              return `
+                👤 ${value.total} total<br>
+                🟢 ${value.active} active<br>
+                🔴 ${value.inactive} inactive
+              `;
+            }
+            if (key === 'winner') {
+              return `${value.name}<br>💸 $${value.prize}`;
+            }
+            return JSON.stringify(value);
+          }
+          if (key === 'uptime_seconds') {
+            return formatSeconds(value);
+          }
+          return value;
+        }
+
+        Object.entries(data).forEach(([key, value]) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h2>${formatValue(key, value)}</h2>
+            <p>${labels[key] || key}</p>
+          `;
+          dashboard.appendChild(card);
+        });
+
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
     }
 
     fetchData();
-    setInterval(fetchData, 5000); // 🔁 Real-time every 5 sec
+    setInterval(fetchData, 5000); // refresh every 5 seconds
   </script>
 </body>
 </html>
