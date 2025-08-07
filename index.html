@@ -1,95 +1,99 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>BOOM Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gambling Bot Dashboard</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      padding: 2rem;
-      background: #1a1a1a;
-      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #333;
     }
 
-    h1 {
+    header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
       text-align: center;
-      margin-bottom: 2rem;
+      font-size: 1.5rem;
     }
 
     .dashboard {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 20px;
+      padding: 2rem;
       justify-content: center;
     }
 
     .card {
-      background: #2c2c2c;
-      width: 30%;
-      aspect-ratio: 1 / 1;
-      padding: 1.5rem;
+      background-color: white;
       border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 2rem;
+      min-width: 250px;
+      max-width: 300px;
+      flex: 1;
       text-align: center;
-      font-size: 1.1rem;
-      box-sizing: border-box;
     }
 
-    @media (max-width: 900px) {
-      .card {
-        width: 45%;
-      }
+    .card h2 {
+      margin: 0;
+      font-size: 2rem;
+      color: #3498db;
     }
 
-    @media (max-width: 600px) {
-      .card {
-        width: 100%;
+    .card p {
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard {
+        flex-direction: column;
+        align-items: center;
       }
     }
   </style>
 </head>
 <body>
-  <h1>💣 Boom Gambling Bot Dashboard</h1>
-
-  <div class="dashboard">
-    <div class="card">🧑‍🤝‍🧑 Players: <br><span id="players">Loading...</span></div>
-    <div class="card">📦 Bot Size: <br><span id="bot_size">Loading...</span></div>
-    <div class="card">🗃️ Database: <br><span id="db_status">Loading...</span></div>
-    <div class="card">⏱️ Uptime: <br><span id="uptime">Loading...</span></div>
-    <div class="card">🏁 Time Left: <br><span id="time_left">Loading...</span></div>
-    <div class="card">💰 Pool Size: ₹<br><span id="pool">Loading...</span></div>
-    <div class="card">🥇 Last Winner: <br><span id="winner">Loading...</span></div>
-    <div class="card">📚 Quizzes Played: <br><span id="quizzes">Loading...</span></div>
-    <div class="card">📊 Sessions Today: <br><span id="sessions">Loading...</span></div>
+  <header>🎲 Gambling Bot Dashboard</header>
+  <div class="dashboard" id="dashboard">
+    <!-- Dynamic content injected via JS -->
   </div>
 
   <script>
-    const API_URL = "https://gaming-bot-0cvv.onrender.com/status"; // Replace with your backend URL
-
     async function fetchData() {
-      const res = await fetch(API_URL);
+      const res = await fetch('https://your-render-url.onrender.com/data');
       const data = await res.json();
 
-      document.getElementById("players").innerText = `${data.players.active} Active / ${data.players.inactive} Inactive`;
-      document.getElementById("bot_size").innerText = data.bot_size;
-      document.getElementById("db_status").innerText = data.db_status;
+      const dashboard = document.getElementById('dashboard');
+      dashboard.innerHTML = '';
 
-      const hours = Math.floor(data.uptime_seconds / 3600);
-      const minutes = Math.floor((data.uptime_seconds % 3600) / 60);
-      document.getElementById("uptime").innerText = `${hours}h ${minutes}m`;
+      const keys = {
+        bot_size: '🤖 Bot Size',
+        db_status: '🗃️ DB Status',
+        player_count: '🧍 Players Online',
+        uptime: '⏱️ Uptime'
+      };
 
-      document.getElementById("time_left").innerText = data.time_left;
-      document.getElementById("pool").innerText = data.current_pool;
-      document.getElementById("winner").innerText = `${data.winner.name} (₹${data.winner.prize})`;
-      document.getElementById("quizzes").innerText = data.quizzes_played;
-      document.getElementById("sessions").innerText = data.sessions_today;
+      Object.entries(data).forEach(([key, value]) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h2>${value}</h2>
+          <p>${keys[key] || key}</p>
+        `;
+        dashboard.appendChild(card);
+      });
     }
 
     fetchData();
-    setInterval(fetchData, 10000);
+    setInterval(fetchData, 5000); // 🔁 Real-time every 5 sec
   </script>
 </body>
 </html>
-
 
